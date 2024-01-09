@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/server.ts && node ./dist/server.js"
+    "dev": "ts-node ./src/server.ts && nodemon ./dist/server.js"
   },
   "author": "",
   "license": "ISC",
