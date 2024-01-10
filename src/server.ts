@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 require("./helpers/InitMongoDB");
+const morgan = require("morgan");
 
 const app = express();
+app.use(morgan("dev"));
 
 app.get("/", (request: Request, response: Response) => {
   response.send("get request successful");
