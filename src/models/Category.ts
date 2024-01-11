@@ -1,4 +1,4 @@
-import User from "./User";
+import Account from "./Account";
 
 type Color = {
   id: string;
@@ -17,7 +17,7 @@ type Category = {
   id: string;
   color: Color;
   icon: Icon;
-  user: User;
+  account: Account;
   isEditable: boolean;
 };
 
