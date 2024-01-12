@@ -3,6 +3,7 @@ import AuthRoute from "./routes/AuthRoute";
 import { error } from "console";
 const CreateError = require("http-errors");
 const { verifyAccessToken } = require("./helpers/jwtHelpers");
+require("./helpers/initRedis");
 
 require("./helpers/InitMongoDB");
 const morgan = require("morgan");

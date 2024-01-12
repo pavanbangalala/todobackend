@@ -3,15 +3,19 @@ const User = require("../Schema/UserSchema");
 import CreateError from "http-errors";
 import { RegistrationSchema, LoginSchema } from "../helpers/validationSchema";
 import bcrypt from "bcrypt";
-const { signAccessToken, signRefreshToken } = require("../helpers/jwtHelpers");
-
+const {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} = require("../helpers/jwtHelpers");
+const redisClient = require("../helpers/initRedis");
 const route = express.Router();
 
 route.post(
   "/register",
   async (request: Request, response: Response, next: NextFunction) => {
     try {
-      console.log("register user");
+      console.log("register user", request.body);
       // validate schema
       const result = await RegistrationSchema.validateAsync(request.body);
       // dereference request body
@@ -70,5 +74,37 @@ route.post(
     }
   }
 );
+
+route.post("/refresh-token", async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) throw CreateError.BadRequest();
+    const userId = await verifyRefreshToken(refreshToken);
+    const accessToken = await signAccessToken(userId);
+    const refToken = await signRefreshToken(userId);
+    res.send({ accessToken: accessToken, refreshToken: refToken });
+  } catch (error) {
+    next(error);
+  }
+});
+
+route.delete("/logout", async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    console.log("req.body", refreshToken);
+    if (!refreshToken) throw CreateError.BadRequest();
+    const userId = await verifyRefreshToken(refreshToken);
+    console.log("user id", userId);
+    redisClient.DEL(userId, (error, result) => {
+      if (error) {
+        throw CreateError.InternalServerError(error.message);
+      }
+      res.status(204).send({ message: "logout success" });
+      console.log(res);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default route;
