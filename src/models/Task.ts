@@ -1,11 +1,11 @@
-import User from "./User";
+import Account from "./Account";
 
 type Task = {
   id: string;
   name: string;
   categoryId: string;
   isCompleted: boolean;
-  user: User;
+  account: Account;
 };
 
 export default Task;
